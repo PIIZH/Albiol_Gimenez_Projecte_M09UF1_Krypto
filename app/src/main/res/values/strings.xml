@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">KryptoChat</string>
+    <string name="authorS">Created by Gerard Albiol and Miquel Giménez</string>
 </resources>
