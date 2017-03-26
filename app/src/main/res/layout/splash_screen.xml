@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="487dp"
+        android:layout_width="wrap_content"
+        android:layout_height="305dp"
+        android:layout_weight="0.34"
         android:adjustViewBounds="false"
         android:paddingBottom="10dp"
         android:paddingEnd="10dp"
@@ -20,10 +22,25 @@
         android:paddingTop="10dp"
         app:srcCompat="@drawable/chat_logo" />
 
+
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.37"
+        android:gravity="center">
+
+        <ProgressBar
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:indeterminate="true" />
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="35dp"
+        android:layout_weight="0.71"
         android:text="@string/authorS"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat"
