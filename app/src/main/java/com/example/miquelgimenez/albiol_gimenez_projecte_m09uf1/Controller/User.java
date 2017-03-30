@@ -1,4 +1,4 @@
-package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.View.controller;
+package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller;
 
 /**
  * Created by gerard on 30/03/17.

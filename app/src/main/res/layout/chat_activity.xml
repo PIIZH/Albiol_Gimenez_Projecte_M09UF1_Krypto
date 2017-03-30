@@ -29,8 +29,6 @@
             android:layout_alignParentEnd="true"
             android:background="@color/colorPrimaryDark"
             android:shadowColor="@android:color/background_dark"
-            android:shadowDx="5dp"
-            android:shadowDy="5dp"
             android:text="Send"
             android:textAlignment="center"
             android:textColor="@android:color/background_light"
