@@ -7,23 +7,15 @@ package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller;
 public class User {
 
     private String username;
-    private String roomChat = "dam";
+    private String roomChat;
 
     public User(String username, String roomChat) {
         this.username = username;
         this.roomChat = roomChat;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getUsername() {
         return this.username;
-    }
-
-    public void setRoomChat(String roomChat) {
-        this.roomChat = roomChat;
     }
 
     public String getRoomChat() {
