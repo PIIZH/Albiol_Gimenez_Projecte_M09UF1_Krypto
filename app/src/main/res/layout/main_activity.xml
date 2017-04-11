@@ -60,6 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginStart="27dp"
+        android:layout_marginTop="30dp"
         android:layout_toEndOf="@+id/btnHelp"
         android:text="Welcome to the Krypto Chat app. You must enter an username to get access to the chat. Also you can create a  chatroom to talk with your friends or you can acces to the global chat and spoke with all the users!"
         android:textAlignment="textStart"
