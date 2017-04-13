@@ -10,24 +10,20 @@ import android.widget.TextView;
 
 import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.R;
 
+import java.util.ArrayList;
+
 /**
  * Created by gerard on 11/04/17.
  */
 
 public class ListChatAdapter extends BaseAdapter {
 
-    Activity context;
-    String[] user;
-    String[] message;
+    private Activity context;
+    private ArrayList<String> user;
+    private ArrayList<String> message;
 
-    /**
-     * Constructor Custom ListView
-     *
-     * @param   {Activity}  context
-     * @param   {String[]}  user
-     * @param   {String[]}  message
-     */
-    public ListChatAdapter(Activity context, String[] user, String[] message) {
+
+    public ListChatAdapter(Activity context, ArrayList<String> user, ArrayList<String> message) {
         super();
         this.context = context;
         this.user = user;
@@ -36,7 +32,7 @@ public class ListChatAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return user.length;
+        return user.size();
     }
 
     @Override
@@ -72,13 +68,14 @@ public class ListChatAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.txtViewUser.setText(user[position]);
-        holder.txtViewBody.setText(message[position]);
+        holder.txtViewUser.setText(user.get(position));
+        holder.txtViewBody.setText(message.get(position));
 
-        if(!user[position].equals("gerard")) {
-            holder.txtViewUser.setGravity(Gravity.LEFT);
-            holder.txtViewBody.setGravity(Gravity.LEFT);
-        }
+//        TODO: no funciona el canvi d'alineacio, fer un altre xml amb el text a l'altra banda?
+//        if(!user.get(position).equals("gerard")) {
+//            holder.txtViewUser.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+//            holder.txtViewBody.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+//        }
 
         return convertView;
     }

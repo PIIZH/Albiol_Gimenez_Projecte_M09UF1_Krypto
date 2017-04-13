@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity{
     @BindView(R.id.txvHelp) TextView txvHelp;
     @BindView(R.id.btnHelp) Button btnHelp;
 
+    public static final String extraUsername = "com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Username";
+    public static final String extraChatRoom = "com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.ChatRoom";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,13 +82,13 @@ public class MainActivity extends AppCompatActivity{
 
         if(etUsername.getText().length() > 0){
 
-            chatAct_intent.putExtra("user",etUsername.getText());
+            chatAct_intent.putExtra(extraUsername, etUsername.getText().toString());
 
             if(etChatRoom.isFocusable() && etUsername.getText().length() > 0){
-                chatAct_intent.putExtra("chatRoom",etChatRoom.getText());
+                chatAct_intent.putExtra(extraChatRoom, etChatRoom.getText().toString());
             }
             else {
-                chatAct_intent.putExtra("chatRoom","dam");
+                chatAct_intent.putExtra(extraChatRoom, "dam");
             }
 
             startActivity(chatAct_intent);

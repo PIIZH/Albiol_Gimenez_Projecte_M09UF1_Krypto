@@ -45,9 +45,11 @@
             android:layout_alignTop="@+id/btnSend"
             android:layout_toStartOf="@+id/btnSend"
             android:ems="10"
+            android:hint="Writte here..."
             android:inputType="textPersonName"
-            android:text="Name"
-            android:textAlignment="textStart" />
+            android:textAlignment="textStart"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/darker_gray" />
     </RelativeLayout>
 
 </RelativeLayout>
