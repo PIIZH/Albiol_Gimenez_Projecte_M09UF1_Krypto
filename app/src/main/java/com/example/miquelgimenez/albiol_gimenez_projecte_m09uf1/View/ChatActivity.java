@@ -73,7 +73,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_activity);
-
+//test
         ButterKnife.bind(this);
 
         socket.connect();
