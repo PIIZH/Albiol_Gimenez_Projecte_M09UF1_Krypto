@@ -56,7 +56,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private static final String KEYMODE = "DES";
 
-    private static final String IP = "192.168.1.41";
+    private static final String IP = "192.168.1.43";
     private static final String PORT = "30002";
 
     private Socket socket;
@@ -77,7 +77,7 @@ public class ChatActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         socket.connect();
-        socket.on("message", handleIncomingMessages);
+        socket.on("messageS", handleIncomingMessages);
 
         Intent obtainIntent = getIntent();
 
@@ -99,7 +99,7 @@ public class ChatActivity extends AppCompatActivity {
      * Update the adapter
      */
     private void updateChat(String u, String m) {
-
+        System.out.println("new message");
         name.add(u);
         body.add(m);
 
@@ -121,18 +121,9 @@ public class ChatActivity extends AppCompatActivity {
         //symmetricEncrypted(message.getText().toString());
 
         socket.emit("message", username, message.getText().toString());
-        updateChat(username, message.getText().toString());
-        //scrollBottom();
 
         message.setText("");
 
-    }
-
-    /**
-     * Scroll to the bottom of the view
-     */
-    public void scrollBottom() {
-        chatList.smoothScrollToPosition(chatAdapter.getCount() - 1);
     }
 
 
@@ -149,11 +140,12 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
-                    String u = "";
-                    String m = "";
+                    System.out.println(args[0]);
+                    String u = new String();
+                    String m = new String();
 
                     try {
-                        u = data.getString("name");
+                        u = data.getString("user");
                         m = data.getString("message");
                     }
                     catch(JSONException e) {
