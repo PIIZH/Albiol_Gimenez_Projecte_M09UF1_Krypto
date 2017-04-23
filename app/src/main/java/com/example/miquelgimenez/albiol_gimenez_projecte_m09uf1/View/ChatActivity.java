@@ -14,7 +14,24 @@ import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.ListC
 import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.User;
 import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.R;
 
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,12 +54,30 @@ public class ChatActivity extends AppCompatActivity {
     protected ArrayList<String> name = new ArrayList<>();
     protected ArrayList<String> body = new ArrayList<>();
 
+    private static final String KEYMODE = "DES";
+
+    private static final String IP = "192.168.1.41";
+    private static final String PORT = "30002";
+
+    private Socket socket;
+    {
+        try {
+            socket = IO.socket("http://" + IP + ":" + PORT);
+        }
+        catch(URISyntaxException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_activity);
 
         ButterKnife.bind(this);
+
+        socket.connect();
+        socket.on("message", handleIncomingMessages);
 
         Intent obtainIntent = getIntent();
 
@@ -58,14 +93,17 @@ public class ChatActivity extends AppCompatActivity {
 //            newUser.setRoomChat("dam");
         }
 
-        updateChat();
-
     }
 
     /**
      * Update the adapter
      */
-    private void updateChat() {
+    private void updateChat(String u, String m) {
+
+        name.add(u);
+        body.add(m);
+
+        System.out.println("updateChat: " + name.toString() + ", " + body.toString());
 
         chatAdapter = new ListChatAdapter(this, name, body);
         chatList.setAdapter(chatAdapter);
@@ -80,12 +118,98 @@ public class ChatActivity extends AppCompatActivity {
     @OnClick(R.id.btnSend)
     public void sendMessage(View view) {
 
-        name.add(username);
-        body.add(message.getText().toString());
+        //symmetricEncrypted(message.getText().toString());
+
+        socket.emit("message", username, message.getText().toString());
+        updateChat(username, message.getText().toString());
+        //scrollBottom();
 
         message.setText("");
 
-        updateChat();
+    }
 
+    /**
+     * Scroll to the bottom of the view
+     */
+    public void scrollBottom() {
+        chatList.smoothScrollToPosition(chatAdapter.getCount() - 1);
+    }
+
+
+    /**
+     * Handler messages
+     */
+    private Emitter.Listener handleIncomingMessages = new Emitter.Listener() {
+
+        @Override
+        public void call(final Object... args) {
+
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String u = "";
+                    String m = "";
+
+                    try {
+                        u = data.getString("name");
+                        m = data.getString("message");
+                    }
+                    catch(JSONException e) {
+                        System.out.println(e.getMessage());
+                    }
+
+                    updateChat(u, m);
+                }
+
+            });
+
+        }
+
+    };
+
+
+    /*
+    public String symmetricEncrypted(String t) {
+
+        try {
+            KeyGenerator keyGen = KeyGenerator.getInstance(KEYMODE);
+            SecretKey secretKey = keyGen.generateKey();
+
+            Cipher cripto;
+            cripto = Cipher.getInstance("DES/ECB/PKCS5Padding");
+
+            byte[] text = t.getBytes();
+
+            System.out.println("Text [Byte Format]: " + text);
+            System.out.println("Text: " + new String(text));
+
+            cripto.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] textEncrypted = cripto.doFinal(text);
+            System.out.println("Text encriptat: " + textEncrypted);
+
+            //desencripta
+            cripto.init(Cipher.DECRYPT_MODE, secretKey);
+            byte[] textDecrypted = cripto.doFinal(textEncrypted);
+            System.out.println("Text desencriptat: " + new String(textDecrypted));
+
+            return "";
+        }
+        catch(NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
+                BadPaddingException | IllegalBlockSizeException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return "Something is wrong";
+
+    }
+    */
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        socket.disconnect();
     }
 }

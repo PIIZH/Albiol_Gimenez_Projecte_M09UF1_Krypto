@@ -8,7 +8,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/US_export_policy" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/local_policy" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
