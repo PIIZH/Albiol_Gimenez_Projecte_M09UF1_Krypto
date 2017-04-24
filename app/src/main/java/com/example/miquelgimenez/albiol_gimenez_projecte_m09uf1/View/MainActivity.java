@@ -25,9 +25,10 @@ public class MainActivity extends AppCompatActivity{
     @BindView(R.id.swDefaultChatRoom) Switch swDefaultChatRoom;
     @BindView(R.id.txvHelp) TextView txvHelp;
     @BindView(R.id.btnHelp) Button btnHelp;
+    @BindView(R.id.tvMode) TextView mode;
 
     public static final String extraUsername = "com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Username";
-    public static final String extraChatRoom = "com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.ChatRoom";
+    public static final String encryptMode = "com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.ChatRoom";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +65,14 @@ public class MainActivity extends AppCompatActivity{
         etChatRoom.setText(null);
 
         if(!swDefaultChatRoom.isChecked()){
-            etChatRoom.setHint("Enter a ChatRoom");
-            etChatRoom.setFocusable(true);
+//            etChatRoom.setHint("Enter a ChatRoom");
+//            etChatRoom.setFocusable(true);
+            mode.setText("Symmetric");
         }
         else {
-           etChatRoom.setHint("Default ChatRoom");
-           etChatRoom.setFocusable(false);
+//           etChatRoom.setHint("Default ChatRoom");
+//           etChatRoom.setFocusable(false);
+            mode.setText("Assymetric");
        }
 
     }
@@ -83,13 +86,14 @@ public class MainActivity extends AppCompatActivity{
         if(etUsername.getText().length() > 0){
 
             chatAct_intent.putExtra(extraUsername, etUsername.getText().toString());
+            chatAct_intent.putExtra(encryptMode, mode.getText().toString());
 
-            if(etChatRoom.isFocusable() && etUsername.getText().length() > 0){
-                chatAct_intent.putExtra(extraChatRoom, etChatRoom.getText().toString());
-            }
-            else {
-                chatAct_intent.putExtra(extraChatRoom, "dam");
-            }
+//            if(etChatRoom.isFocusable() && etUsername.getText().length() > 0){
+//                chatAct_intent.putExtra(encryptMode, mode.getText().toString());
+//            }
+//            else {
+//                chatAct_intent.putExtra(encryptMode, "dam");
+//            }
 
             startActivity(chatAct_intent);
         }

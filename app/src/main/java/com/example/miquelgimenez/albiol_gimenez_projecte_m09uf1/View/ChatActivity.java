@@ -46,17 +46,16 @@ public class ChatActivity extends AppCompatActivity {
     @BindView(R.id.btnSend) Button send;
     @BindView(R.id.chatList) ListView chatList;
 
-//    User newUser = new User();
     public ListChatAdapter chatAdapter;
     public String username;
-    public String roomChat;
+    public Boolean encryptChat;
 
     protected ArrayList<String> name = new ArrayList<>();
     protected ArrayList<String> body = new ArrayList<>();
 
     private static final String KEYMODE = "DES";
 
-    private static final String IP = "172.20.18.53";
+    private static final String IP = "192.168.43.122";
     private static final String PORT = "30002";
 
     private Socket socket;
@@ -73,24 +72,18 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_activity);
-//test
+
         ButterKnife.bind(this);
 
         socket.connect();
-        socket.on("message", handleIncomingMessages);
+        socket.on("messageServer", handleIncomingMessages);
 
         Intent obtainIntent = getIntent();
 
         if(obtainIntent != null) {
             username = obtainIntent.getStringExtra(MainActivity.extraUsername);
-//            roomChat = obtainIntent.getStringExtra(MainActivity.extraChatRoom);
-            roomChat = "dam";
-
-            //TODO: realment es necesari?  Deixar demoment per si al fer el server ens cal
-////            newUser = new User(obtainIntent.getStringExtra("name"),"dam");
-//            newUser.setUsername(obtainIntent.getStringExtra("name"));
-////            newUser.setRoomChat(obtainIntent.getStringExtra("room"));
-//            newUser.setRoomChat("dam");
+            encryptChat = obtainIntent.getStringExtra(MainActivity.encryptMode).equals("Symmetric");
+            System.out.println("encryptChat: " + encryptChat);
         }
 
     }
@@ -103,9 +96,9 @@ public class ChatActivity extends AppCompatActivity {
         name.add(u);
         body.add(m);
 
-        System.out.println("updateChat: " + name.toString() + ", " + body.toString());
+//        System.out.println("updateChat: " + name.toString() + ", " + body.toString());
 
-        chatAdapter = new ListChatAdapter(this, name, body);
+        chatAdapter = new ListChatAdapter(this, name, body, username);
         chatList.setAdapter(chatAdapter);
 
     }
@@ -140,19 +133,16 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
-                    System.out.println(args[0]);
-                    String u = new String();
-                    String m = new String();
 
                     try {
-                        u = data.getString("user");
-                        m = data.getString("message");
+                        String u = data.getString("user");
+                        String m = data.getString("message");
+                        updateChat(u, m);
                     }
                     catch(JSONException e) {
                         System.out.println(e.getMessage());
                     }
 
-                    updateChat(u, m);
                 }
 
             });

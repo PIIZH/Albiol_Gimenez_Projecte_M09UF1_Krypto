@@ -21,13 +21,15 @@ public class ListChatAdapter extends BaseAdapter {
     private Activity context;
     private ArrayList<String> user;
     private ArrayList<String> message;
+    private String username;
 
 
-    public ListChatAdapter(Activity context, ArrayList<String> user, ArrayList<String> message) {
+    public ListChatAdapter(Activity context, ArrayList<String> user, ArrayList<String> message, String username) {
         super();
         this.context = context;
         this.user = user;
         this.message = message;
+        this.username = username;
     }
 
     @Override
@@ -53,6 +55,10 @@ public class ListChatAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        if(!user.get(position).equals(this.username)) {
+            return other(position, convertView);
+        }
+
         ViewHolder holder;
 
         LayoutInflater inflater = context.getLayoutInflater();
@@ -71,11 +77,34 @@ public class ListChatAdapter extends BaseAdapter {
         holder.txtViewUser.setText(user.get(position));
         holder.txtViewBody.setText(message.get(position));
 
-//        TODO: no funciona el canvi d'alineacio, fer un altre xml amb el text a l'altra banda?
-//        if(!user.get(position).equals("gerard")) {
-//            holder.txtViewUser.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-//            holder.txtViewBody.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-//        }
+        return convertView;
+    }
+
+    /**
+     * Render messages from other people
+     *
+     * @param   {Number}    position
+     * @param   {View}  convertView
+     * @return  View
+     */
+    public View other(int position, View convertView) {
+        ViewHolder holder;
+
+        LayoutInflater inflater = context.getLayoutInflater();
+
+        if(convertView == null) {
+            convertView = inflater.inflate(R.layout.message_item_chat_other, null);
+            holder = new ViewHolder();
+            holder.txtViewUser = (TextView) convertView.findViewById(R.id.txtUserOther);
+            holder.txtViewBody = (TextView) convertView.findViewById(R.id.txtBodyOther);
+            convertView.setTag(holder);
+        }
+        else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.txtViewUser.setText(user.get(position));
+        holder.txtViewBody.setText(message.get(position));
 
         return convertView;
     }
