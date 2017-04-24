@@ -56,7 +56,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private static final String KEYMODE = "DES";
 
-    private static final String IP = "192.168.1.43";
+    private static final String IP = "172.20.18.53";
     private static final String PORT = "30002";
 
     private Socket socket;
@@ -77,7 +77,7 @@ public class ChatActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         socket.connect();
-        socket.on("messageS", handleIncomingMessages);
+        socket.on("message", handleIncomingMessages);
 
         Intent obtainIntent = getIntent();
 
@@ -121,7 +121,7 @@ public class ChatActivity extends AppCompatActivity {
         //symmetricEncrypted(message.getText().toString());
 
         socket.emit("message", username, message.getText().toString());
-
+        updateChat(username, message.getText().toString());
         message.setText("");
 
     }
