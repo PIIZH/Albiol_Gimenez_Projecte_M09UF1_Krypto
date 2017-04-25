@@ -11,20 +11,11 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.ListChatAdapter;
-import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.User;
+import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.SymmetricUtil;
 import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.R;
 
 import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -52,8 +43,6 @@ public class ChatActivity extends AppCompatActivity {
 
     protected ArrayList<String> name = new ArrayList<>();
     protected ArrayList<String> body = new ArrayList<>();
-
-    private static final String KEYMODE = "DES";
 
     private static final String IP = "192.168.43.122";
     private static final String PORT = "30002";
@@ -86,17 +75,18 @@ public class ChatActivity extends AppCompatActivity {
             System.out.println("encryptChat: " + encryptChat);
         }
 
+        SymmetricUtil sym = new SymmetricUtil();
+        sym.makeKey();
+
     }
 
     /**
      * Update the adapter
      */
     private void updateChat(String u, String m) {
-        System.out.println("new message");
+
         name.add(u);
         body.add(m);
-
-//        System.out.println("updateChat: " + name.toString() + ", " + body.toString());
 
         chatAdapter = new ListChatAdapter(this, name, body, username);
         chatList.setAdapter(chatAdapter);
@@ -112,11 +102,13 @@ public class ChatActivity extends AppCompatActivity {
     public void sendMessage(View view) {
 
         //symmetricEncrypted(message.getText().toString());
-
+//        TODO: modificar el socket per enviar el missatge encriptat
         socket.emit("message", username, message.getText().toString());
         updateChat(username, message.getText().toString());
         message.setText("");
 
+
+//        TODO: provar aixo. Base64.encode / decode
     }
 
 
@@ -156,11 +148,11 @@ public class ChatActivity extends AppCompatActivity {
     public String symmetricEncrypted(String t) {
 
         try {
-            KeyGenerator keyGen = KeyGenerator.getInstance(KEYMODE);
-            SecretKey secretKey = keyGen.generateKey();
+            //KeyGenerator keyGen = KeyGenerator.getInstance(KEYMODE);
+            //SecretKey secretKey = keyGen.generateKey();
 
-            Cipher cripto;
-            cripto = Cipher.getInstance("DES/ECB/PKCS5Padding");
+            //Cipher cripto;
+            //cripto = Cipher.getInstance("DES/ECB/PKCS5Padding");
 
             byte[] text = t.getBytes();
 
