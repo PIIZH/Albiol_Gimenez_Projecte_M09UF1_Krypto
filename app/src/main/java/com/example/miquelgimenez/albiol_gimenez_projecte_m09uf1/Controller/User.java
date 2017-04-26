@@ -1,8 +1,5 @@
 package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller;
 
-/**
- * Created by gerard on 30/03/17.
- */
 
 //TODO: Deprecated
 public class User {

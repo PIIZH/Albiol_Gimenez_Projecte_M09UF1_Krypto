@@ -12,9 +12,6 @@ import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.R;
 
 import java.util.ArrayList;
 
-/**
- * Created by gerard on 11/04/17.
- */
 
 public class ListChatAdapter extends BaseAdapter {
 
