@@ -28,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+
 /**
  * Created by gerard on 30/03/17.
  */
@@ -44,8 +45,9 @@ public class ChatActivity extends AppCompatActivity {
     protected ArrayList<String> name = new ArrayList<>();
     protected ArrayList<String> body = new ArrayList<>();
 
-    private static final String IP = "192.168.43.122";
+    private static final String IP = "172.20.18.53";
     private static final String PORT = "30002";
+    private SymmetricUtil sym;
 
     private Socket socket;
     {
@@ -75,7 +77,7 @@ public class ChatActivity extends AppCompatActivity {
             System.out.println("encryptChat: " + encryptChat);
         }
 
-        SymmetricUtil sym = new SymmetricUtil();
+        sym = new SymmetricUtil();
         sym.makeKey();
 
     }
@@ -101,14 +103,12 @@ public class ChatActivity extends AppCompatActivity {
     @OnClick(R.id.btnSend)
     public void sendMessage(View view) {
 
-        //symmetricEncrypted(message.getText().toString());
-//        TODO: modificar el socket per enviar el missatge encriptat
-        socket.emit("message", username, message.getText().toString());
+//        System.out.println("encrypt: " + sym.encrypt(message.getText().toString()));
+//        System.out.println("decrypt: " + sym.decrypt(sym.encrypt(message.getText().toString())));
+        socket.emit("message", username, sym.encrypt(message.getText().toString()));
         updateChat(username, message.getText().toString());
         message.setText("");
 
-
-//        TODO: provar aixo. Base64.encode / decode
     }
 
 
@@ -125,10 +125,11 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
-
+                    System.out.println(data);
                     try {
                         String u = data.getString("user");
-                        String m = data.getString("message");
+                        String m = sym.decrypt(data.getString("message"));
+                        System.out.println("soc la m: " + m);
                         updateChat(u, m);
                     }
                     catch(JSONException e) {
@@ -144,6 +145,7 @@ public class ChatActivity extends AppCompatActivity {
     };
 
 
+    //TODO: no borrar demoment
     /*
     public String symmetricEncrypted(String t) {
 
@@ -159,14 +161,13 @@ public class ChatActivity extends AppCompatActivity {
             System.out.println("Text [Byte Format]: " + text);
             System.out.println("Text: " + new String(text));
 
-            cripto.init(Cipher.ENCRYPT_MODE, secretKey);
-            byte[] textEncrypted = cripto.doFinal(text);
-            System.out.println("Text encriptat: " + textEncrypted);
+            //cripto.init(Cipher.ENCRYPT_MODE, secretKey);
+            //byte[] textEncrypted = cripto.doFinal(text);
+            //System.out.println("Text encriptat: " + textEncrypted);
 
-            //desencripta
-            cripto.init(Cipher.DECRYPT_MODE, secretKey);
-            byte[] textDecrypted = cripto.doFinal(textEncrypted);
-            System.out.println("Text desencriptat: " + new String(textDecrypted));
+            //cripto.init(Cipher.DECRYPT_MODE, secretKey);
+            //byte[] textDecrypted = cripto.doFinal(textEncrypted);
+            //System.out.println("Text desencriptat: " + new String(textDecrypted));
 
             return "";
         }
