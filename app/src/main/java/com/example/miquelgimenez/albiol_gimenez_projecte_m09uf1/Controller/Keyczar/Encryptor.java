@@ -1,4 +1,4 @@
-package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller;
+package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.Keyczar;
 
 import org.keyczar.Crypter;
 import org.keyczar.exceptions.KeyczarException;

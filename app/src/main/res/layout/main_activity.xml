@@ -32,21 +32,21 @@
         android:inputType="textPersonName"
         android:textAlignment="center"
         android:textColor="@android:color/background_light"
-        android:layout_above="@+id/swDefaultChatRoom"
+        android:layout_above="@+id/swEncryptionMode"
         android:layout_marginBottom="16dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true" />
 
     <Switch
-        android:id="@+id/swDefaultChatRoom"
+        android:id="@+id/swEncryptionMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="31dp"
-        android:splitTrack="false"
-        tools:checked="false"
         android:layout_above="@+id/btnStartChat"
         android:layout_alignStart="@+id/txvHelp"
-        android:layout_marginStart="56dp" />
+        android:layout_marginBottom="31dp"
+        android:layout_marginStart="56dp"
+        android:splitTrack="false"
+        tools:checked="false" />
 
     <Button
         android:id="@+id/btnStartChat"
@@ -90,8 +90,8 @@
         android:textColor="@color/colorWhite"
         android:textStyle="bold"
         android:layout_marginStart="33dp"
-        android:layout_alignBaseline="@+id/swDefaultChatRoom"
-        android:layout_alignBottom="@+id/swDefaultChatRoom"
-        android:layout_toEndOf="@+id/swDefaultChatRoom" />
+        android:layout_alignBaseline="@+id/swEncryptionMode"
+        android:layout_alignBottom="@+id/swEncryptionMode"
+        android:layout_toEndOf="@+id/swEncryptionMode" />
 
 </RelativeLayout>

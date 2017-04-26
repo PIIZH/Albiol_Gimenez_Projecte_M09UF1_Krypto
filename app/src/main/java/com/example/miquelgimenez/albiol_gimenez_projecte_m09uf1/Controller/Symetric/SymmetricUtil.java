@@ -1,4 +1,4 @@
-package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller;
+package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.Symetric;
 
 import android.util.Base64;
 

@@ -7,14 +7,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.ListChatAdapter;
-import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.SymmetricUtil;
+import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.Symetric.SymmetricUtil;
+import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.Asymetric.AsymetricUtil;
 import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.R;
 
 import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -24,16 +26,16 @@ import com.github.nkzawa.socketio.client.Socket;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-/**
- * Created by gerard on 30/03/17.
- */
 public class ChatActivity extends AppCompatActivity {
-
     @BindView(R.id.etMessage) EditText message;
     @BindView(R.id.btnSend) Button send;
     @BindView(R.id.chatList) ListView chatList;
@@ -48,6 +50,7 @@ public class ChatActivity extends AppCompatActivity {
     private static final String IP = "172.20.18.53";
     private static final String PORT = "30002";
     private SymmetricUtil sym;
+    private AsymetricUtil asym;
 
     private Socket socket;
     {
@@ -76,9 +79,14 @@ public class ChatActivity extends AppCompatActivity {
             encryptChat = obtainIntent.getStringExtra(MainActivity.encryptMode).equals("Symmetric");
             System.out.println("encryptChat: " + encryptChat);
         }
-
-        sym = new SymmetricUtil();
-        sym.makeKey();
+        if(encryptChat){
+            sym = new SymmetricUtil();
+            sym.makeKey();
+            //test localhost eliminar
+            asym = new AsymetricUtil();
+        }else{
+            asym = new AsymetricUtil();
+        }
 
     }
 
@@ -97,15 +105,32 @@ public class ChatActivity extends AppCompatActivity {
 
     /**
      * Click event to send the message
-     *
+     *+
      * @param   {View}  view
      */
     @OnClick(R.id.btnSend)
-    public void sendMessage(View view) {
+    public void sendMessage(View view){
 
-//        System.out.println("encrypt: " + sym.encrypt(message.getText().toString()));
-//        System.out.println("decrypt: " + sym.decrypt(sym.encrypt(message.getText().toString())));
-        socket.emit("message", username, sym.encrypt(message.getText().toString()));
+        System.out.println("encrypt symetric: " + sym.encrypt(message.getText().toString()));
+        System.out.println("decrypt symetric : " + sym.decrypt(sym.encrypt(message.getText().toString()))+"\n");
+
+        try {
+            System.out.println("encrypt asymetric :"+asym.RSAEncrypt(message.getText().toString()));
+            byte[] x = asym.RSAEncrypt(message.getText().toString());
+            System.out.println("decrypt asymetric :"+asym.RSADecrypt(x));
+        } catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException | IllegalBlockSizeException| BadPaddingException e) {
+            e.printStackTrace();
+        }
+
+        if(encryptChat){
+            socket.emit("message", username, sym.encrypt(message.getText().toString()));
+        }else{
+            try{
+                socket.emit("message", username, asym.RSAEncrypt(message.getText().toString()));
+            }catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException | IllegalBlockSizeException| BadPaddingException e) {
+                e.printStackTrace();
+            }
+        }
         updateChat(username, message.getText().toString());
         message.setText("");
 
@@ -128,7 +153,15 @@ public class ChatActivity extends AppCompatActivity {
                     System.out.println(data);
                     try {
                         String u = data.getString("user");
-                        String m = sym.decrypt(data.getString("message"));
+                        String m = null;
+                        /**
+                        try {
+                            m = encryptChat ? sym.decrypt(data.getString("message")): asym.RSADecrypt("message");
+                        } catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException | IllegalBlockSizeException| BadPaddingException e) {
+                            e.printStackTrace();
+                        }*/
+
+
                         System.out.println("soc la m: " + m);
                         updateChat(u, m);
                     }

@@ -1,8 +1,8 @@
 package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.View;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity{
 
     @BindView(R.id.etUsername) EditText etUsername;
     @BindView(R.id.etChatRoom) EditText etChatRoom;
-    @BindView(R.id.swDefaultChatRoom) Switch swDefaultChatRoom;
+    @BindView(R.id.swEncryptionMode) Switch swEncryptionMode;
     @BindView(R.id.txvHelp) TextView txvHelp;
     @BindView(R.id.btnHelp) Button btnHelp;
     @BindView(R.id.tvMode) TextView mode;
@@ -59,20 +59,20 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-    @OnClick(R.id.swDefaultChatRoom)
+    @OnClick(R.id.swEncryptionMode)
     public void changeEtChatRoom(){
 
         etChatRoom.setText(null);
 
-        if(!swDefaultChatRoom.isChecked()){
-//            etChatRoom.setHint("Enter a ChatRoom");
-//            etChatRoom.setFocusable(true);
+        if(!swEncryptionMode.isChecked()){
+            //etChatRoom.setHint("Enter a ChatRoom");
+            //etChatRoom.setFocusable(true);
             mode.setText("Symmetric");
         }
         else {
-//           etChatRoom.setHint("Default ChatRoom");
-//           etChatRoom.setFocusable(false);
-            mode.setText("Assymetric");
+            //etChatRoom.setHint("Default ChatRoom");
+            //etChatRoom.setFocusable(false);
+            mode.setText("Asymetric");
        }
 
     }
@@ -88,12 +88,12 @@ public class MainActivity extends AppCompatActivity{
             chatAct_intent.putExtra(extraUsername, etUsername.getText().toString());
             chatAct_intent.putExtra(encryptMode, mode.getText().toString());
 
-//            if(etChatRoom.isFocusable() && etUsername.getText().length() > 0){
-//                chatAct_intent.putExtra(encryptMode, mode.getText().toString());
-//            }
-//            else {
-//                chatAct_intent.putExtra(encryptMode, "dam");
-//            }
+            //if(etChatRoom.isFocusable() && etUsername.getText().length() > 0){
+            //chatAct_intent.putExtra(encryptMode, mode.getText().toString());
+            //}
+            //else {
+            //chatAct_intent.putExtra(encryptMode, "dam");
+            //}
 
             startActivity(chatAct_intent);
         }
