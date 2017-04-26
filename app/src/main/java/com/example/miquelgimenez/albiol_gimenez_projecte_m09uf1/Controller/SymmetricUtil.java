@@ -10,10 +10,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
-/**
- * Created by gerard on 25/04/17.
- */
-
 public class SymmetricUtil {
 
     private static final String KEYMODE = "DES";

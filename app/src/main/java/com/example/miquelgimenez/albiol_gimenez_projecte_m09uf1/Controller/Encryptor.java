@@ -3,9 +3,6 @@ package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller;
 import org.keyczar.Crypter;
 import org.keyczar.exceptions.KeyczarException;
 
-/**
- * Created by gerard on 14/04/17.
- */
 
 public class Encryptor {
 
@@ -23,6 +20,7 @@ public class Encryptor {
      * @param   {String}    text
      * @return  {String or null}
      */
+
     public String encryptText(String text) {
 
         try {

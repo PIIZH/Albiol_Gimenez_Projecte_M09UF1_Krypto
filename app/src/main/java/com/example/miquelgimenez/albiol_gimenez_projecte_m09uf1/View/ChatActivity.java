@@ -28,9 +28,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * Created by gerard on 30/03/17.
- */
 public class ChatActivity extends AppCompatActivity {
 
     @BindView(R.id.etMessage) EditText message;
@@ -44,7 +41,7 @@ public class ChatActivity extends AppCompatActivity {
     protected ArrayList<String> name = new ArrayList<>();
     protected ArrayList<String> body = new ArrayList<>();
 
-    private static final String IP = "192.168.43.122";
+    private static final String IP = "192.168.1.34";
     private static final String PORT = "30002";
 
     private Socket socket;
