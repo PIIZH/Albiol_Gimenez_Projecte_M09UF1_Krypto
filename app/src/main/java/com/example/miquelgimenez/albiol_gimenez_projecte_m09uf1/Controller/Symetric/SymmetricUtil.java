@@ -2,8 +2,12 @@ package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.Syme
 
 import android.util.Base64;
 
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Array;
+import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -11,6 +15,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import static android.util.Base64.DEFAULT;
 import static android.util.Base64.NO_WRAP;
@@ -22,6 +27,7 @@ import static android.util.Base64.NO_WRAP;
 public class SymmetricUtil {
 
     private static final String KEYMODE = "DES";
+    private final static String PASSW_HASH = "SHA-1";
     private Cipher cripto;
     private SecretKey myKey;
     private byte[] textEncrypted;
@@ -31,7 +37,7 @@ public class SymmetricUtil {
     public SymmetricUtil() {
 
         try {
-            cripto = Cipher.getInstance("DES/ECB/PKCS5Padding");
+            cripto = Cipher.getInstance(KEYMODE);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             System.out.println(e.getMessage());
         }
@@ -44,15 +50,9 @@ public class SymmetricUtil {
      * @return  {SecretKey} || null
      */
     public void makeKey() {
-
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance(KEYMODE);
-            myKey = keyGen.generateKey();
-        }
-        catch(NoSuchAlgorithmException e) {
-            System.out.println(e.getMessage());
-        }
-
+        //KeyGenerator keyGen = KeyGenerator.getInstance(KEYMODE);
+        //myKey = keyGen.generateKey();
+        myKey = hashBuildKey("pepe");
     }
 
     public String encrypt(String message) {
@@ -86,4 +86,18 @@ public class SymmetricUtil {
 
     }
 
+
+    private SecretKey hashBuildKey(String pass){
+        SecretKey secretKey = null;
+        try {
+            MessageDigest digestiveFontaneda = MessageDigest.getInstance(PASSW_HASH);
+            digestiveFontaneda.update(pass.getBytes("UTF-8"));
+            byte[] hash = digestiveFontaneda.digest();
+            byte[] key = Arrays.copyOf(hash,8);
+            secretKey = new SecretKeySpec(key,KEYMODE);
+        }catch (NoSuchAlgorithmException|UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return secretKey;
+    }
 }
