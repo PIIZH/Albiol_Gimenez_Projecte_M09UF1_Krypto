@@ -55,6 +55,11 @@ public class SymmetricUtil {
         myKey = hashBuildKey("pepe");
     }
 
+    //TODO: prueba
+    public String getMyKey() {
+        return Base64.encodeToString(myKey.getEncoded(), NO_WRAP);
+    }
+
     public String encrypt(String message) {
 
         try {
@@ -71,13 +76,36 @@ public class SymmetricUtil {
 
     }
 
-    public String decrypt(String msgEncrypt) {
+//    public String decrypt(String msgEncrypt) {
+    public String decrypt(String msgEncrypt, String key) {
+
+        // decode the base64 encoded string
+        byte[] decodedKey = Base64.decode(key, NO_WRAP);
+        // rebuild key using SecretKeySpec
+        SecretKey originalKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "DES");
+
+        if(originalKey.equals(myKey)) {
+            try {
+                cripto.init(Cipher.DECRYPT_MODE, myKey);
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            try {
+                cripto.init(Cipher.DECRYPT_MODE, originalKey);
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+            }
+        }
+
+
         try {
-            cripto.init(Cipher.DECRYPT_MODE, myKey);
+//            cripto.init(Cipher.DECRYPT_MODE, myKey);
             textDecrypted = cripto.doFinal(Base64.decode(msgEncrypt, NO_WRAP));
             return new String(textDecrypted);
         }
-        catch(InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+        catch(BadPaddingException | IllegalBlockSizeException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }

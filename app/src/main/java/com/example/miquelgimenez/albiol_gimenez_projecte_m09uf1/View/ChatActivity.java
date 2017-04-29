@@ -48,7 +48,7 @@ public class ChatActivity extends AppCompatActivity {
     protected ArrayList<String> name = new ArrayList<>();
     protected ArrayList<String> body = new ArrayList<>();
 
-    private static final String IP = "192.168.1.43";
+    private static final String IP = "192.168.1.38";
     private static final String PORT = "30002";
     private SymmetricUtil sym;
     private AsymetricUtil asym;
@@ -78,13 +78,13 @@ public class ChatActivity extends AppCompatActivity {
         if(obtainIntent != null) {
             username = obtainIntent.getStringExtra(MainActivity.extraUsername);
             encryptChat = obtainIntent.getStringExtra(MainActivity.encryptMode).equals("Symmetric");
-            System.out.println("encryptChat: " + encryptChat);
         }
-        if(encryptChat){
+
+        if(encryptChat) {
             sym = new SymmetricUtil();
             sym.makeKey();
-            asym = new AsymetricUtil();
-        }else{
+        }
+        else {
             asym = new AsymetricUtil();
         }
 
@@ -111,25 +111,28 @@ public class ChatActivity extends AppCompatActivity {
     @OnClick(R.id.btnSend)
     public void sendMessage(View view){
 
-        System.out.println("encrypt symetric: " + sym.encrypt(message.getText().toString()));
-        System.out.println("decrypt symetric : " + sym.decrypt(sym.encrypt(message.getText().toString()))+"\n");
-
-        try {
-            System.out.println("encrypt asymetric :"+asym.RSAEncrypt(message.getText().toString()));
-            System.out.println("decrypt asymetric :"+asym.RSADecrypt(asym.RSAEncrypt(message.getText().toString())));
-        } catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException | IllegalBlockSizeException| BadPaddingException|UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+//        System.out.println("encrypt symetric: " + sym.encrypt(message.getText().toString()));
+//        System.out.println("decrypt symetric : " + sym.decrypt(sym.encrypt(message.getText().toString()))+"\n");
+//
+//        try {
+//            System.out.println("encrypt asymetric :"+asym.RSAEncrypt(message.getText().toString()));
+//            System.out.println("decrypt asymetric :"+asym.RSADecrypt(asym.RSAEncrypt(message.getText().toString())));
+//        } catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException | IllegalBlockSizeException| BadPaddingException|UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
 
         if(encryptChat){
-            socket.emit("message", username, sym.encrypt(message.getText().toString()));
-        }else{
-            try{
+            socket.emit("message", username, sym.encrypt(message.getText().toString()), sym.getMyKey());
+        }
+        else {
+            try {
                 socket.emit("message", username, asym.RSAEncrypt(message.getText().toString()));
-            }catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException | IllegalBlockSizeException| BadPaddingException|UnsupportedEncodingException e) {
+            }
+            catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException | IllegalBlockSizeException| BadPaddingException|UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
+
         updateChat(username, message.getText().toString());
         message.setText("");
 
@@ -154,8 +157,11 @@ public class ChatActivity extends AppCompatActivity {
                         String u = data.getString("user");
                         String m = null;
                         try {
-                            m = encryptChat ? sym.decrypt(data.getString("message")): asym.RSADecrypt("message");
-                        } catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException | IllegalBlockSizeException| BadPaddingException|UnsupportedEncodingException e) {
+                            m = encryptChat ?
+                                    sym.decrypt(data.getString("message"), data.getString("key")) :
+                                    asym.RSADecrypt("message");
+                        } catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException |
+                                IllegalBlockSizeException| BadPaddingException|UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
 
@@ -176,46 +182,9 @@ public class ChatActivity extends AppCompatActivity {
     };
 
 
-    //TODO: no borrar demoment
-    /*
-    public String symmetricEncrypted(String t) {
-
-        try {
-            //KeyGenerator keyGen = KeyGenerator.getInstance(KEYMODE);
-            //SecretKey secretKey = keyGen.generateKey();
-
-            //Cipher cripto;
-            //cripto = Cipher.getInstance("DES/ECB/PKCS5Padding");
-
-            byte[] text = t.getBytes();
-
-            System.out.println("Text [Byte Format]: " + text);
-            System.out.println("Text: " + new String(text));
-
-            //cripto.init(Cipher.ENCRYPT_MODE, secretKey);
-            //byte[] textEncrypted = cripto.doFinal(text);
-            //System.out.println("Text encriptat: " + textEncrypted);
-
-            //cripto.init(Cipher.DECRYPT_MODE, secretKey);
-            //byte[] textDecrypted = cripto.doFinal(textEncrypted);
-            //System.out.println("Text desencriptat: " + new String(textDecrypted));
-
-            return "";
-        }
-        catch(NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
-                BadPaddingException | IllegalBlockSizeException e) {
-            System.err.println(e.getMessage());
-        }
-
-        return "Something is wrong";
-
-    }
-    */
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         socket.disconnect();
     }
 }
