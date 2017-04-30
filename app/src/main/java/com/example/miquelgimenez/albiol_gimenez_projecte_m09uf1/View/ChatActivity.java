@@ -48,7 +48,7 @@ public class ChatActivity extends AppCompatActivity {
     protected ArrayList<String> name = new ArrayList<>();
     protected ArrayList<String> body = new ArrayList<>();
 
-    private static final String IP = "192.168.1.38";
+    private static final String IP = "192.168.1.34";
     private static final String PORT = "30002";
     private SymmetricUtil sym;
     private AsymetricUtil asym;
@@ -86,6 +86,7 @@ public class ChatActivity extends AppCompatActivity {
         }
         else {
             asym = new AsymetricUtil();
+            socket.emit("publicKey", username, asym.getKey());
         }
 
     }
@@ -122,11 +123,13 @@ public class ChatActivity extends AppCompatActivity {
 //        }
 
         if(encryptChat){
-            socket.emit("message", username, sym.encrypt(message.getText().toString()), sym.getMyKey());
+            String raro = "symmetric";
+            socket.emit("message", username, sym.encrypt(message.getText().toString()), sym.getMyKey(), raro);
         }
         else {
             try {
-                socket.emit("message", username, asym.RSAEncrypt(message.getText().toString()));
+                socket.emit("getKey", username);
+                socket.emit("message", username, asym.RSAEncrypt(message.getText().toString()), asym.getKey(), "asymmetric");
             }
             catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException | IllegalBlockSizeException| BadPaddingException|UnsupportedEncodingException e) {
                 e.printStackTrace();

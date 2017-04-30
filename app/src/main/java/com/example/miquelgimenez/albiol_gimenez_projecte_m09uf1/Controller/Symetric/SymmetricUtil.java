@@ -2,6 +2,8 @@ package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.Syme
 
 import android.util.Base64;
 
+import com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.Controller.Hash;
+
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -20,11 +22,7 @@ import javax.crypto.spec.SecretKeySpec;
 import static android.util.Base64.DEFAULT;
 import static android.util.Base64.NO_WRAP;
 
-/**
- * Created by gerard on 25/04/17.
- */
-
-public class SymmetricUtil {
+public class SymmetricUtil implements Hash{
 
     private static final String KEYMODE = "DES";
     private final static String PASSW_HASH = "SHA-1";
@@ -55,7 +53,6 @@ public class SymmetricUtil {
         myKey = hashBuildKey("pepe");
     }
 
-    //TODO: prueba
     public String getMyKey() {
         return Base64.encodeToString(myKey.getEncoded(), NO_WRAP);
     }
@@ -115,7 +112,8 @@ public class SymmetricUtil {
     }
 
 
-    private SecretKey hashBuildKey(String pass){
+    @Override
+    public SecretKey hashBuildKey(String pass) {
         SecretKey secretKey = null;
         try {
             MessageDigest digestiveFontaneda = MessageDigest.getInstance(PASSW_HASH);
