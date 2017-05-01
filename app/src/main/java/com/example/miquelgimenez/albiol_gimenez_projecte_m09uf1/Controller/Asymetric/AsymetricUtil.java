@@ -50,7 +50,7 @@ public class AsymetricUtil implements Hash{
 
     public void setPublicKey(String key) {
 
-        byte[] data = Base64.decode(key, Base64.DEFAULT);
+        byte[] data = Base64.decode(key, Base64.NO_WRAP);
         X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
         KeyFactory fact;
 
@@ -65,18 +65,15 @@ public class AsymetricUtil implements Hash{
     }
 
     public String RSAEncrypt(final String plain) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
-        System.out.println("Com esta la public key??? " + publicKeyOther);
         cipher.init(Cipher.ENCRYPT_MODE, publicKeyOther);
         encryptedBytes = cipher.doFinal(plain.getBytes("Utf-8"));
-        return Base64.encodeToString(encryptedBytes,Base64.DEFAULT);
+        return Base64.encodeToString(encryptedBytes, Base64.NO_WRAP);
     }
 
 
     public String RSADecrypt(final String encryptedStr) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
-        System.out.println("RSADecrypt - Message: " + encryptedStr);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        decryptedBytes = cipher.doFinal(Base64.decode(encryptedStr, Base64.DEFAULT));
-        System.out.println("Final step: " + new String(decryptedBytes));
+        decryptedBytes = cipher.doFinal(Base64.decode(encryptedStr, Base64.NO_WRAP));
         return new String(decryptedBytes);
     }
 
@@ -95,7 +92,7 @@ public class AsymetricUtil implements Hash{
      * @return  {String}
      */
     public String getKey(){
-        return Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT);
+        return Base64.encodeToString(publicKey.getEncoded(), Base64.NO_WRAP);
     }
 
     @Override
@@ -106,7 +103,7 @@ public class AsymetricUtil implements Hash{
             digestiveFontaneda.update(pass.getBytes("UTF-8"));
             byte[] hash = digestiveFontaneda.digest();
             byte[] key = Arrays.copyOf(hash,8);
-            secretKey = new SecretKeySpec(key,KEYMODE);
+            secretKey = new SecretKeySpec(key, KEYMODE);
         }catch (NoSuchAlgorithmException|UnsupportedEncodingException e) {
             e.printStackTrace();
         }

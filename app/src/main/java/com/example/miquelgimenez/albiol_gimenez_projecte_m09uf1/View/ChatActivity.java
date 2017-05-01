@@ -143,7 +143,7 @@ public class ChatActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-            }, 5000);
+            }, 500);
 
         }
 
