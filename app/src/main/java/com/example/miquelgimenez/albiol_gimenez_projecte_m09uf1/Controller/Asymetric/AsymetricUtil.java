@@ -33,7 +33,7 @@ public class AsymetricUtil implements Hash{
     private KeyPairGenerator kpg;
     private KeyPair kp;
     private PublicKey publicKey;
-    private PublicKey publicKeyOther;
+    private PublicKey publicKeyOther = null;
     private PrivateKey privateKey;
     private byte [] encryptedBytes,decryptedBytes;
     private Cipher cipher;
@@ -47,11 +47,12 @@ public class AsymetricUtil implements Hash{
         }
     }
 
+
     public void setPublicKey(String key) {
 
         byte[] data = Base64.decode(key, Base64.DEFAULT);
         X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
-        KeyFactory fact = null;
+        KeyFactory fact;
 
         try {
             fact = KeyFactory.getInstance("RSA");
@@ -64,7 +65,7 @@ public class AsymetricUtil implements Hash{
     }
 
     public String RSAEncrypt(final String plain) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
-
+        System.out.println("Com esta la public key??? " + publicKeyOther);
         cipher.init(Cipher.ENCRYPT_MODE, publicKeyOther);
         encryptedBytes = cipher.doFinal(plain.getBytes("Utf-8"));
         return Base64.encodeToString(encryptedBytes,Base64.DEFAULT);
@@ -72,8 +73,10 @@ public class AsymetricUtil implements Hash{
 
 
     public String RSADecrypt(final String encryptedStr) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
+        System.out.println("RSADecrypt - Message: " + encryptedStr);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        decryptedBytes = cipher.doFinal(Base64.decode(encryptedStr.getBytes("UTf-8"), Base64.DEFAULT));
+        decryptedBytes = cipher.doFinal(Base64.decode(encryptedStr, Base64.DEFAULT));
+        System.out.println("Final step: " + new String(decryptedBytes));
         return new String(decryptedBytes);
     }
 

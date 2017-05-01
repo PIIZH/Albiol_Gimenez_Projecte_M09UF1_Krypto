@@ -3,6 +3,7 @@ package com.example.miquelgimenez.albiol_gimenez_projecte_m09uf1.View;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -48,7 +49,7 @@ public class ChatActivity extends AppCompatActivity {
     protected ArrayList<String> name = new ArrayList<>();
     protected ArrayList<String> body = new ArrayList<>();
 
-    private static final String IP = "192.168.1.34";
+    private static final String IP = "192.168.1.43";
     private static final String PORT = "30002";
     private SymmetricUtil sym;
     private AsymetricUtil asym;
@@ -72,6 +73,7 @@ public class ChatActivity extends AppCompatActivity {
 
         socket.connect();
         socket.on("messageServer", handleIncomingMessages);
+        socket.on("getKeyServer", handleIncomingPublicKeys);
 
         Intent obtainIntent = getIntent();
 
@@ -123,17 +125,26 @@ public class ChatActivity extends AppCompatActivity {
 //        }
 
         if(encryptChat){
-            String raro = "symmetric";
-            socket.emit("message", username, sym.encrypt(message.getText().toString()), sym.getMyKey(), raro);
+            socket.emit("message", username, sym.encrypt(message.getText().toString()), sym.getMyKey(), "symmetric");
         }
         else {
-            try {
-                socket.emit("getKey", username);
-                socket.emit("message", username, asym.RSAEncrypt(message.getText().toString()), asym.getKey(), "asymmetric");
-            }
-            catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException | IllegalBlockSizeException| BadPaddingException|UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+
+            socket.emit("getKey", username);
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    try {
+                        socket.emit("message", username, asym.RSAEncrypt(message.getText().toString()), null, "asymmetric");
+                    } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
+                            IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 5000);
+
         }
 
         updateChat(username, message.getText().toString());
@@ -155,14 +166,17 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
-                    System.out.println(data);
+
+                    System.out.println("socketMessage: " + data);
+
                     try {
                         String u = data.getString("user");
-                        String m = null;
+                        String m = "";
+
                         try {
                             m = encryptChat ?
                                     sym.decrypt(data.getString("message"), data.getString("key")) :
-                                    asym.RSADecrypt("message");
+                                    asym.RSADecrypt(data.getString("messageRSA"));
                         } catch (NoSuchAlgorithmException |NoSuchPaddingException |InvalidKeyException |
                                 IllegalBlockSizeException| BadPaddingException|UnsupportedEncodingException e) {
                             e.printStackTrace();
@@ -171,6 +185,35 @@ public class ChatActivity extends AppCompatActivity {
 
                         System.out.println("soc la m: " + m);
                         updateChat(u, m);
+                    }
+                    catch(JSONException e) {
+                        System.out.println(e.getMessage());
+                    }
+
+                }
+
+            });
+
+        }
+
+    };
+
+    /**
+     * Handle incoming public keys
+     */
+    private Emitter.Listener handleIncomingPublicKeys = new Emitter.Listener() {
+
+        @Override
+        public void call(final Object... args) {
+
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    System.out.println(data);
+                    try {
+                        asym.setPublicKey(data.getString("publicKeyOther"));
                     }
                     catch(JSONException e) {
                         System.out.println(e.getMessage());
